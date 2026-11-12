@@ -1,0 +1,430 @@
+{
+  "info": {
+    "_postman_id": "a90b4e23-7629-4d6f-b258-0d12e873b984",
+    "name": "Urban Heat Prediction & Cooling Management System",
+    "description": "Comprehensive Postman Collection covering all REST API endpoints for heat monitoring, cooling hubs management, biometeorological heat-risk prediction, and dashboard analytics.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080/api",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Dashboard",
+      "item": [
+        {
+          "name": "Get Dashboard Statistics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/dashboard/stats",
+              "host": ["{{baseUrl}}"],
+              "path": ["dashboard", "stats"]
+            },
+            "description": "Returns aggregated counts of heat reports, risk breakdown (high, medium, low), cooling centre capacities, available slots, average temperature, and recent reports."
+          },
+          "response": [
+            {
+              "name": "200 OK - Aggregated Analytics",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"totalHeatReports\": 8,\n  \"highRiskCount\": 3,\n  \"mediumRiskCount\": 3,\n  \"lowRiskCount\": 2,\n  \"totalCoolingCentres\": 6,\n  \"totalCapacity\": 690,\n  \"totalAvailableSlots\": 395,\n  \"totalOccupiedSlots\": 295,\n  \"averageTemperature\": 36.5\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Heat Reports",
+      "item": [
+        {
+          "name": "Get All Heat Reports",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/heat-reports",
+              "host": ["{{baseUrl}}"],
+              "path": ["heat-reports"]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK - All Reports",
+              "status": "OK",
+              "code": 200,
+              "body": "[\n  {\n    \"id\": 1,\n    \"location\": \"Marina Beach Coastal Hub, Chennai\",\n    \"temperature\": 42.5,\n    \"severity\": \"HIGH\",\n    \"humidity\": 72.0,\n    \"latitude\": 13.0500,\n    \"longitude\": 80.2824\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Get Heat Report by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/heat-reports/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["heat-reports", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK - Single Report",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"id\": 1,\n  \"location\": \"Marina Beach Coastal Hub, Chennai\",\n  \"temperature\": 42.5,\n  \"severity\": \"HIGH\",\n  \"humidity\": 72.0\n}"
+            }
+          ]
+        },
+        {
+          "name": "Add Heat Report (Auto-calculate severity)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"location\": \"Koyambedu Wholesale Terminal, Chennai\",\n  \"temperature\": 43.2,\n  \"humidity\": 65.0,\n  \"latitude\": 13.0694,\n  \"longitude\": 80.1948\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/heat-reports",
+              "host": ["{{baseUrl}}"],
+              "path": ["heat-reports"]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK - Created Report",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"id\": 9,\n  \"location\": \"Koyambedu Wholesale Terminal, Chennai\",\n  \"temperature\": 43.2,\n  \"severity\": \"HIGH\",\n  \"humidity\": 65.0\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Heat Report",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"location\": \"Koyambedu Wholesale Terminal, Chennai\",\n  \"temperature\": 38.5,\n  \"humidity\": 58.0,\n  \"latitude\": 13.0694,\n  \"longitude\": 80.1948\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/heat-reports/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["heat-reports", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK - Updated Report",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"id\": 1,\n  \"location\": \"Koyambedu Wholesale Terminal, Chennai\",\n  \"temperature\": 38.5,\n  \"severity\": \"MEDIUM\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete Heat Report",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/heat-reports/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["heat-reports", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK - Deleted Report",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"message\": \"Heat report deleted successfully\",\n  \"id\": 1\n}"
+            }
+          ]
+        },
+        {
+          "name": "Negative Test - Invalid Temperature (> 70°C)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"location\": \"Death Valley Sensor\",\n  \"temperature\": 85.0\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/heat-reports",
+              "host": ["{{baseUrl}}"],
+              "path": ["heat-reports"]
+            }
+          },
+          "response": [
+            {
+              "name": "400 Bad Request - Out of Bounds",
+              "status": "Bad Request",
+              "code": 400,
+              "body": "{\n  \"status\": 400,\n  \"error\": \"Bad Request\",\n  \"message\": \"Temperature must be between -50 and 70 Celsius\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Negative Test - Blank Location",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"location\": \"\",\n  \"temperature\": 35.0\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/heat-reports",
+              "host": ["{{baseUrl}}"],
+              "path": ["heat-reports"]
+            }
+          },
+          "response": [
+            {
+              "name": "400 Bad Request - Blank Location",
+              "status": "Bad Request",
+              "code": 400,
+              "body": "{\n  \"status\": 400,\n  \"error\": \"Bad Request\",\n  \"message\": \"Location is required\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Cooling Centres",
+      "item": [
+        {
+          "name": "Get All Cooling Centres",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/cooling-locations",
+              "host": ["{{baseUrl}}"],
+              "path": ["cooling-locations"]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK - All Centres",
+              "status": "OK",
+              "code": 200,
+              "body": "[\n  {\n    \"id\": 1,\n    \"name\": \"Public Cooling Centre\",\n    \"address\": \"Marina Beach, Chennai\",\n    \"capacity\": 100,\n    \"availableSlots\": 75\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Get Cooling Centre by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/cooling-locations/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["cooling-locations", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK - Single Centre",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"id\": 1,\n  \"name\": \"Public Cooling Centre\",\n  \"address\": \"Marina Beach, Chennai\",\n  \"capacity\": 100,\n  \"availableSlots\": 75\n}"
+            }
+          ]
+        },
+        {
+          "name": "Add Cooling Centre",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Egmore Community AC Hall\",\n  \"address\": \"12 Gandhi Irwin Road, Egmore, Chennai\",\n  \"capacity\": 120,\n  \"availableSlots\": 85,\n  \"latitude\": 13.0805,\n  \"longitude\": 80.2605\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/cooling-locations",
+              "host": ["{{baseUrl}}"],
+              "path": ["cooling-locations"]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK - Created Centre",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"id\": 7,\n  \"name\": \"Egmore Community AC Hall\",\n  \"address\": \"12 Gandhi Irwin Road, Egmore, Chennai\",\n  \"capacity\": 120,\n  \"availableSlots\": 85\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Cooling Centre",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Egmore Community AC Hall - Expanded\",\n  \"address\": \"12 Gandhi Irwin Road, Egmore, Chennai\",\n  \"capacity\": 150,\n  \"availableSlots\": 110,\n  \"latitude\": 13.0805,\n  \"longitude\": 80.2605\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/cooling-locations/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["cooling-locations", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK - Updated Centre",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"id\": 1,\n  \"name\": \"Public Cooling Centre - Expanded\",\n  \"capacity\": 150,\n  \"availableSlots\": 110\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete Cooling Centre",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/cooling-locations/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["cooling-locations", "1"]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK - Deleted Centre",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"message\": \"Cooling location deleted successfully\",\n  \"id\": 1\n}"
+            }
+          ]
+        },
+        {
+          "name": "Negative Test - Available Slots Exceed Capacity",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Invalid Shelter\",\n  \"address\": \"100 Ocean Way\",\n  \"capacity\": 50,\n  \"availableSlots\": 80\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/cooling-locations",
+              "host": ["{{baseUrl}}"],
+              "path": ["cooling-locations"]
+            }
+          },
+          "response": [
+            {
+              "name": "400 Bad Request - Invariant Violated",
+              "status": "Bad Request",
+              "code": 400,
+              "body": "{\n  \"status\": 400,\n  \"error\": \"Bad Request\",\n  \"message\": \"Invalid capacity or available slots\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Predictions",
+      "item": [
+        {
+          "name": "Generate Heat Risk Prediction",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"location\": \"T. Nagar Commercial Core, Chennai\",\n  \"temperature\": 42.5,\n  \"humidity\": 66.0,\n  \"greenCoverPercentage\": 8.0\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/predictions",
+              "host": ["{{baseUrl}}"],
+              "path": ["predictions"]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK - Heat Prediction Response",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"id\": 4,\n  \"location\": \"T. Nagar Commercial Core, Chennai\",\n  \"temperature\": 42.5,\n  \"humidity\": 66.0,\n  \"greenCoverPercentage\": 8.0,\n  \"heatRiskScore\": 72.8,\n  \"riskCategory\": \"HIGH\",\n  \"riskExplanation\": \"High thermal risk alert...\",\n  \"preventiveMeasures\": \"• Issue civic heat advisory...\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Prediction History",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/predictions",
+              "host": ["{{baseUrl}}"],
+              "path": ["predictions"]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK - All Historical Predictions",
+              "status": "OK",
+              "code": 200,
+              "body": "[\n  {\n    \"id\": 1,\n    \"location\": \"T. Nagar Commercial Core, Chennai\",\n    \"heatRiskScore\": 88.4,\n    \"riskCategory\": \"EXTREME\"\n  }\n]"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Run Spring Boot Backend",
+      "type": "shell",
+      "command": "./mvnw spring-boot:run",
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new",
+        "focus": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Run React Frontend",
+      "type": "shell",
+      "command": "export PATH=\"$HOME/.local/node/bin:$PATH\" && cd frontend && npm run dev",
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new",
+        "focus": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Run All Tests (Maven)",
+      "type": "shell",
+      "command": "./mvnw test",
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    }
+  ]
+}
